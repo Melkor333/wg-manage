@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 set -euo pipefail
 set +x
 
@@ -168,6 +168,7 @@ else
   wg genkey > "$CLIENT.key"
 fi
 wg pubkey > "$CLIENT.pub" < "$CLIENT.key"
+PSK="$(wg genpsk)"
 chmod 0644 "$CLIENT.pub"
 chmod 0600 "$CLIENT.key"
 popd
@@ -192,8 +193,7 @@ popd
     echo "[Peer]"
     echo -n "PublicKey = "
     cat "$ROOT/$SERVER_HOSTNAME.pub"
-    echo -n "PresharedKey = "
-    cat "$ROOT/psk.key"
+    echo "PresharedKey = $PSK"
     echo "Endpoint = $ENDPOINT"
     echo "PersistentKeepalive = 25"
     echo ""
@@ -216,8 +216,7 @@ echo "$ADDRESS/$SUB" > "$ROOT/last_address"
     echo "[Peer]"
     echo -n "PublicKey = "
     cat "$ROOT/$CLIENT.pub"
-    echo -n "PresharedKey = "
-    cat "$ROOT/psk.key"
+    echo -n "PresharedKey = $PSK"
     echo "AllowedIPs = $ADDRESS/32"
     echo ""
 } >> "$SERVER_FILE"

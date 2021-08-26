@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 set -euo pipefail
 set +x
 VERSION=0.1
@@ -27,6 +27,7 @@ usage() {
 NAME=wggt
 BASE=/etc/wireguard/
 NETWORK=''
+SUBNETS=
 
 ## Parse Parameters
 # ______________________________________________________________________________
@@ -123,8 +124,6 @@ wg genkey > "$SERVER.key"
 chmod 0600 "$SERVER.key"
 wg pubkey > "$SERVER.pub" < "$SERVER.key"
 chmod 0644 "$SERVER.pub"
-wg genpsk > "psk.key"
-chmod 0600 "psk.key"
 
 # Create actual server config
 # ______________________________________________________________________________

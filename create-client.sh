@@ -216,7 +216,7 @@ echo "$ADDRESS/$SUB" > "$ROOT/last_address"
     echo "[Peer]"
     echo -n "PublicKey = "
     cat "$ROOT/$CLIENT.pub"
-    echo -n "PresharedKey = $PSK"
+    echo "PresharedKey = $PSK"
     echo "AllowedIPs = $ADDRESS/32"
     echo ""
 } >> "$SERVER_FILE"
@@ -224,9 +224,11 @@ echo "$ADDRESS/$SUB" > "$ROOT/last_address"
 # Restart Service
 # ______________________________________________________________________________
 # TODO: wg add instead of service restart!
-systemctl restart "wg-quick@$NAME"
+if wg show | grep -q "^interface: $NAME\$"; then
+    wg syncconf "$NAME" "$SERVER_FILE"
+fi
 
 # Print the config
 # ______________________________________________________________________________
-echo "\033[0;32mThis is the new config $ROOT/$CLIENT.conf:\033[0m"
+echo -e "\033[0;32mThis is the new config $ROOT/$CLIENT.conf:\033[0m"
 cat "$ROOT/$CLIENT.conf"
